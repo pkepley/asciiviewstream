@@ -10,7 +10,7 @@ from scipy.spatial import KDTree
 _clear_cmd_ = "cls" if os.name == "nt" else "clear"
 
 # some density variables, hackily used as globals here (:
-density = "Ñ@#W$9876543210?!abc;:+=-,._ "
+density = "N@#W$9876543210?!abc;:+=-,._ "
 n_lvl = len(density)
 X = exp(log(255) / n_lvl)
 log_X = log(X)

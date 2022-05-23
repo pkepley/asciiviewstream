@@ -7,10 +7,10 @@ import colored.hex as chex
 from scipy.spatial import KDTree
 
 # clear
-_clear_cmd_ = 'cls' if os.name == 'nt' else 'clear'
+_clear_cmd_ = "cls" if os.name == "nt" else "clear"
 
 # some density variables, hackily used as globals here (:
-density = 'Ñ@#W$9876543210?!abc;:+=-,._ '
+density = "Ñ@#W$9876543210?!abc;:+=-,._ "
 n_lvl = len(density)
 X = exp(log(255) / n_lvl)
 log_X = log(X)
@@ -21,7 +21,7 @@ color_list = list(color_map.keys())
 color_list_255 = 255 * np.array([
     list(map(lambda x: int(x, 16), [c[1:3], c[3:5], c[5:7]]))
     for c in color_list
-], dtype='uint8')
+], dtype="uint8")
 kdd = KDTree(color_list_255)
 
 
@@ -79,7 +79,7 @@ def img_to_ascii(im,
         lvl = np.maximum(lvl, 0)
     else:
         lvl = np.minimum(np.floor(n_lvl * (im_s / 255.0)), n_lvl - 1)
-    lvl = lvl.astype('int')
+    lvl = lvl.astype("int")
 
     # construct the ascii string
     ny, nx = im_s.shape
@@ -158,30 +158,45 @@ def main(rescale_x=None,
     vc.release()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     # get command line arguments
-    parser = argparse.ArgumentParser(description="Stream to Ascii")
-    parser.add_argument('-x', metavar='rescale_x', type=int)
-    parser.add_argument('-y', metavar='rescale_y', type=int)
-    parser.add_argument('-f', metavar='frame_refresh_rate', type=int)
-    parser.add_argument('-a', metavar="font_aspect", type=float)
-    parser.add_argument('-l', action='store_true')
-    parser.add_argument('-i', action='store_true')
-    parser.add_argument('-c', action='store_true')
-    parser.add_argument('-s', action='store_true')
+    parser = argparse.ArgumentParser(
+        description="Stream video to ASCII terminal characters"
+    )
+    parser.add_argument(
+        "-x", metavar="rescale_x", type=int,
+        help="number of character columns (default is 100)"
+    )
+    parser.add_argument(
+        "-y", metavar="rescale_y", type=int,
+        help="number of character rows " +
+             "(default computed based on rescale_x and font_aspect)"
+    )
+    parser.add_argument(
+        "-f", metavar="frame_refresh", type=int, default=100,
+        help="time between frame refreshes in ms (default is 100)"
+    )
+    parser.add_argument(
+        "-a", metavar="font_aspect", type=float, default=2.0,
+        help="font aspect ratio (default is 2.0)")
+    parser.add_argument(
+        "-l", action="store_true",
+        help="apply linear intensity scaling (default is log scaling)"
+    )
+    parser.add_argument(
+        "-i", action="store_true", help="invert intensity"
+    )
+    parser.add_argument(
+        "-c", action="store_true", help="colorize console output"
+    )
+    parser.add_argument(
+        "-s", action="store_true", help="show video stream"
+    )
     args = parser.parse_args()
 
     # default to 150 px wide if not provided
     if args.x is None and args.y is None:
         args.x = 100
-
-    # default to 100 ms between frame refreshes
-    if args.f is None:
-        args.f = 100
-
-    # default for font_aspect is 2.0
-    if args.a is None:
-        args.a = 2.0
 
     # run program
     main(rescale_x=args.x,
